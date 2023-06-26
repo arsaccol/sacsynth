@@ -1,7 +1,7 @@
 import { generateDataPoints } from './generateDataPoints.js'
 
-const results = generateDataPoints(0, 1, 50, Math.sin)
-console.log({results})
+const {real, imag} = generateDataPoints(-1, 1, 32, Math.sin)
+console.log({real, imag})
 
 
 

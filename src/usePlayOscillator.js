@@ -2,7 +2,10 @@ import {
     useState,
     useEffect,
 } from 'react';
-import { generateDataPoints } from './generateDataPoints';
+
+import { 
+    generateDataPoints,
+} from './generateDataPoints';
 
 
 
@@ -80,24 +83,43 @@ function useOscillator() {
 
     //const gainNode = audioContext.createGain()
     //gainNode.connect(audioContext.destination)
-    const [samples, setSamples] = useState(generateDataPoints(0, 1, 100, Math.log2))
+    const waveTable = generateDataPoints(-1, 1, 128, Math.sin)
     const [audioContext, setAudioContext] = useState(new (window.AudioContext || window.webkitAudioContext)())
-    const [oscillator, setOscillator] = useState(audioContext.createOscillator())
+    const [oscillator, setOscillator] = useState(null)
     const [isPlaying, setIsPlaying] = useState(false)
 
     function play() {
-        console.log('playing')
 
-        const newOscillator = audioContext.createOscillator()
-        oscillator.frequency.value = 440.00
-        newOscillator.type = 'sine'
-        newOscillator.connect(audioContext.destination)
-        newOscillator.start()
+        if(!isPlaying) {
+            console.log('playing')
+            //const wave = new PeriodicWave(audioContext, {
+            //    real: waveTable.real,
+            //    imag: waveTable.imag,
+            //})
+            const wave = audioContext.createPeriodicWave(waveTable.real, waveTable.imag, { disableNormalization: false })
+            //const frequency = 440.00
+            const frequency = 1.0
 
-        setOscillator(newOscillator)
 
-        setIsPlaying(true)
-        
+
+
+
+            const newOscillator = new OscillatorNode(audioContext, {
+                frequency: frequency,
+                type: "custom",
+                periodicWave: wave,
+            })
+
+            //const gainOscillator = new GainNode(audioContext, {
+            //})
+
+            newOscillator.connect(audioContext.destination)
+            newOscillator.start()
+
+            setOscillator(newOscillator)
+
+            setIsPlaying(true)
+        }
     }
 
     function stop() {
@@ -108,6 +130,7 @@ function useOscillator() {
 
 
     return {
+        waveTable,
         play,
         stop,
         isPlaying,

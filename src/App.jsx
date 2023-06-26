@@ -7,6 +7,8 @@ import {
     //usePlayOscillator,
     useOscillator,
 } from './usePlayOscillator.js'
+import { Plot } from './Plot'
+
 
 import {
     generateDataPoints,
@@ -22,7 +24,11 @@ function App() {
 
     }
 
-    const { play, stop } = useOscillator()
+    const { 
+        play,
+        stop,
+        waveTable,
+    } = useOscillator()
 
     return (
         <>
@@ -37,6 +43,7 @@ function App() {
             </button>
 
         </div>
+
         </>
     )
 }
